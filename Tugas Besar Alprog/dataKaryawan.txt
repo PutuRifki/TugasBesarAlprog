@@ -1,0 +1,2 @@
+1501,Candra,Supervisor,2,dps
+222,rifki,Direktur,2,dps1
