@@ -38,15 +38,14 @@
 
 int validasi3Pilihan(), validasiPilihJabatan(), cekNIP(const char *str), validasi2Pilihan();
 void login(), newDataKaryawan(), menu(), menuPilihanJabatan();
-void inputDataKaryawan();
 void bacaFileAbsen(char tempNIP[50]);
 void saveAbsen(char tempNIP[50]);
+void createFileAbsen(char NIP[50]); 
 void menuMasuk(char NIP[50], char nama[50], char anak[1], char jabatan[50]);
-void createFileAbsen(char NIP[50], char nama[50], char anak[1], char jabatan[50]); 
-void hitungbiayaHarian(char NIP[255], char nama[255], char jabatan[255]);
 void menuMasuk(char NIP[50], char nama[50], char anak[1], char jabatan[50]);
 void absensi(char NIP[50], char nama[50], char anak[1], char jabatan[50]);
-void gajiFixed(char NIP[255], char nama[255], char anak[1], char jabatan[255]);
+void hitungGaji(char NIP[255], char nama[255], char anak[1], char jabatan[255]);
+void cetakSlipGaji(char tempNIP[50], char NIP[50], char nama[50], char jabatan[50], int hariMasuk, int tunjanganMakan, int tunjanganAnak, int lembur, int PPH21, int cuti, int totalGaji);
 
 void barisAtas(){
     printf("\xda\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xbf");
@@ -68,7 +67,7 @@ int Terimakasih(){
 
 void ulang(char NIP[50], char nama[50], char anak[1], char jabatan[50]){
     int pilihan;
-    printf("Apakah anda ingin ulang?\n");
+    printf("Apakah anda balik ke manu?\n");
     printf("1. Ya\n");
     printf("2. Tidak\n");
     pilihan = validasi2Pilihan();
@@ -202,7 +201,7 @@ void menu(){
     }
 }
 
-void gajiFixed(char NIP[255], char nama[255], char anak[1], char jabatan[255]){
+void hitungGaji(char NIP[255], char nama[255], char anak[1], char jabatan[255]){
     int gajiPokok, totalGaji, biayaHarian, gajiHarian;
     int biayaJabatan;
     int gajiBersihSebulan, gajiBersihSetahun;
@@ -288,46 +287,40 @@ void gajiFixed(char NIP[255], char nama[255], char anak[1], char jabatan[255]){
     printf("Potongan Cuti:              Rp.%d\n", cuti);
     printf("Total Gaji anda:            Rp.%d\n\n", totalGaji);
 
-    ulang(NIP, nama, anak, jabatan);
+
+    int pilihan;
+    printf("Apakah anda ingin mencetak slip gaji?\n");
+    printf("1. Ya\n");
+    printf("2. Tidak\n");
+    printf("Pilihan anda: ");
+    pilihan = validasi2Pilihan();
+    if(pilihan == 1){
+        cetakSlipGaji(tempNIP, NIP, nama, jabatan, hariMasuk, tunjanganMakan, tunjanganAnak, lembur, PPH21, cuti, totalGaji);
+        system("cls");
+        printf("Slip Gaji anda berhasil di cetak!\n");
+        ulang(NIP, nama, anak, jabatan);
+    }
+    else if(pilihan==2){
+        ulang(NIP, nama, anak, jabatan);
+    }
     return;
 }
 
-void hitungbiayaHarian(char NIP[255], char nama[255], char jabatan[255]){
-    int gajiPokok, totalGaji;
-    char tempNIP[50];
-    strcpy(tempNIP, NIP);
-    system("cls");
+void cetakSlipGaji(char tempNIP[50], char NIP[50], char nama[50], char jabatan[50], int hariMasuk, int tunjanganMakan, int tunjanganAnak, int lembur, int PPH21, int cuti, int totalGaji){
+    char slipGaji[50];
+    strcpy(slipGaji, "SlipGaji");
+    FILE *file = fopen(strcat(slipGaji, tempNIP), "a+");
 
-    FILE *file = fopen(strcat(tempNIP, ".txt"), "r");
-    if(file == NULL){
-        printf("File tidak ditemukan.");
-        return;
-    }
-    int hariMasuk = 0;
-    char status;
-    while((status = fgetc(file)) != EOF){
-        if(status == 'H'){
-            hariMasuk++;
-        }
-    }
+    fprintf(file, "Banyak hari masuk: %d\n", hariMasuk);
+    fprintf(file, "Biaya Tunjangan Makan:      Rp.%d\n", tunjanganMakan);
+    fprintf(file, "Biaya Tunjangan anak:       Rp.%d\n", tunjanganAnak);
+    fprintf(file, "Gaji Lembur:                Rp.%d\n", lembur);
+    fprintf(file, "Gaji dipotong PPH:          Rp.%d\n", PPH21);
+    fprintf(file, "Potongan Cuti:              Rp.%d\n", cuti);
+    fprintf(file, "Total Gaji anda:            Rp.%d\n\n", totalGaji);
+
     fclose(file);
-
-    printf("Selamat datang %s - %s - %s\n", NIP,nama,jabatan);
-    printf("Total Kehadiran (Hari): %d\n", hariMasuk);
-
-    if(strcmp(jabatan, "Direktur") == 0){
-        gajiPokok = GAJI_DIREKTUR_HARIAN;
-    }
-    else if(strcmp(jabatan, "Manajer") == 0){
-        gajiPokok = GAJI_MANAJER_HARIAN;
-    }
-    else if(strcmp(jabatan, "Supervisor") == 0){
-        gajiPokok = GAJI_SUPERVISOR_HARIAN;
-    }
-
-    totalGaji = (gajiPokok * hariMasuk) + (hariMasuk * TUNJANGAN_MAKAN);
-
-    printf("Total gaji anda: Rp.%d", totalGaji);
+    return;
 }
 
 void saveAbsen(char tempNIP[50]){
@@ -347,13 +340,12 @@ void bacaFileAbsen(char tempNIP[50]){
     fclose(file);
 }
 
-void createFileAbsen(char NIP[50], char nama[50], char anak[1], char jabatan[50]){
+void createFileAbsen(char NIP[50]){
     char tempNIP[50];
     strcpy(tempNIP, NIP);
     FILE *file = fopen(strcat(tempNIP, ".txt"), "a+");
     fclose(file);
     bacaFileAbsen(tempNIP);
-    absensi(NIP, nama, anak, jabatan);
 }
 
 void absensi(char NIP[50], char nama[50], char anak[1], char jabatan[50]){
@@ -363,77 +355,58 @@ void absensi(char NIP[50], char nama[50], char anak[1], char jabatan[50]){
 
     time_t t = time(NULL);
     struct tm *tm_info;
-    char tmpTgl[50];
-    char cekTgl[50];
-    char tmpJam[50];
     tm_info = localtime(&t);
 
-    int absen;
+    char tmpTgl[50];
+    char tmpJam[50];
     char tempNIP[50];
-    int repeat = 0;
+    int absen;
+    strcpy(tempNIP, NIP);
 
+    // strftime(tmpTgl, 50, "Sun 17-%m-%Y", tm_info);
     strftime(tmpTgl, 50,"%A %d-%m-%Y", tm_info);
     strftime(tmpJam, 50, "%H:%M", tm_info);
-
-    strcpy(tempNIP, NIP);
-    FILE *file = fopen(strcat(tempNIP,".txt"), "a+");
 
     printf("Hari ini: %s\n", tmpTgl);
     printf("Jam: %s\n", tmpJam);
 
-        printf("Apakah anda ingin absen hari ini?\n");
-        printf("1. Ya\n");
-        printf("2. Tidak\n");
-        printf("Pilihan anda:\n");
-        absen = validasi2Pilihan();
-        if(absen==1){
-
-            int sudahAbsen = 0;
-            for(int i = 0; i < countTanggal; ++i){
-                if(strcmp(tmpTgl, tgl[i].hari) == 0 ){
-                    sudahAbsen = 1;
-                    printf("Anda sudah absen untuk hari ini!\n");
-                    printf("Silahkan absen besok.\n");
-                    printf("Tekan ENTER untuk lanjut");
-                    while(_getch() != '\r');
-                    return menuMasuk(NIP, nama, anak, jabatan);
-                    break;
-                }
-            }
-
-            if(!sudahAbsen && absen == 1){
-            strcpy(tgl[countTanggal].hari, tmpTgl);
-            strcpy(tgl[countTanggal].jam, tmpJam);
-            strcpy(tgl[countTanggal].hadir, "H");
-            countTanggal++;
-
-            fprintf(file, "%s,%s,%s\n", tgl[countTanggal].hari, tgl[countTanggal].jam, tgl[countTanggal].hadir);
-            printf("%s", tgl[countTanggal].hari);
-            printf("Anda berhasil absen untuk hari ini!\n");
-
-            saveAbsen(tempNIP);
-            fclose(file);
-            printf("Tekan ENTER untuk lanjut");
-            while(_getch() != '\r');
-            return menuMasuk(NIP, nama, anak, jabatan);
+    printf("Apakah anda ingin absen hari ini?\n");
+    printf("1. Ya\n");
+    printf("2. Tidak\n");
+    printf("Pilihan anda:\n");
+    absen = validasi2Pilihan();
+    if(absen==1){
+        int sudahAbsen = 0;
+        for(int i = 0; i < countTanggal; ++i){
+            if(strcmp(tmpTgl, tgl[i].hari) == 0 ){
+                sudahAbsen = 1;
+                printf("Anda sudah absen untuk hari ini!\n");
+                printf("Silahkan absen besok.\n");
+                printf("Tekan ENTER untuk lanjut");
+                while(_getch() != '\r');
+                return menuMasuk(NIP, nama, anak, jabatan);
+                break;
             }
         }
-        else if(absen==2){
-            printf("Anda akan dikembalikan ke menu.\n");
-            printf("Tekan ENTER untuk lanjut");
-            while(_getch() != '\r');
-            menuMasuk(NIP, nama, anak, jabatan);
-        }else{
-            system("cls");
-            printf("Pilihan anda salah.\n");
+        
+        if(!sudahAbsen && absen == 1){
+        strcpy(tgl[countTanggal].hari, tmpTgl);
+        strcpy(tgl[countTanggal].jam, tmpJam);
+        strcpy(tgl[countTanggal].hadir, "H");
+        countTanggal++;
+        saveAbsen(tempNIP);
+        printf("Anda berhasil absen untuk hari ini!\n");
+        printf("Tekan ENTER untuk lanjut");
+        while(_getch() != '\r');
+        return menuMasuk(NIP, nama, anak, jabatan);
         }
-
-    fclose(file);
-    printf("%s\n", absen);
-    printf("%d", repeat);
-    printf("Tekan ENTER untuk lanjut");
-    while(_getch() != '\r');
-    menuMasuk(NIP, nama, anak, jabatan);
+    }
+    else if(absen==2){
+        printf("Anda akan dikembalikan ke menu.\n");
+        printf("Tekan ENTER untuk lanjut");
+        while(_getch() != '\r');
+        return menuMasuk(NIP, nama, anak, jabatan);
+    }
 }
 
 void menuMasuk(char NIP[50], char nama[50], char anak[1], char jabatan[50]){
@@ -451,12 +424,12 @@ void menuMasuk(char NIP[50], char nama[50], char anak[1], char jabatan[50]){
     pilihan = validasi3Pilihan();
     switch(pilihan){
         case 1 :
-            createFileAbsen(NIP, nama, anak, jabatan);
+            createFileAbsen(NIP);
+            absensi(NIP, nama, anak, jabatan);
         break;
 
         case 2 :
-            // hitungbiayaHarian(NIP, nama, jabatan);
-            gajiFixed(NIP, nama, anak, jabatan);
+            hitungGaji(NIP, nama, anak, jabatan);
         break;
 
         case 3 :
@@ -613,7 +586,6 @@ int main(){
                                                                 id_karyawan[counterKaryawan].password
                                                                 ) == 5){
             counterKaryawan++;
-            // printf("%d", counterKaryawan);
         }
         fclose(fp);
         menu();
