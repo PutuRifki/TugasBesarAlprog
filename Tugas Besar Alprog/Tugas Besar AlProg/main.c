@@ -44,9 +44,30 @@ struct karyawan
     char anak[MAX_ANAK_LEN];
     char password[MAX_PW_LEN];
 };
+
+struct Tanggal
+{
+    char hari[100];
+    char jam[100];
+    char hadir[100];
+};
+
+struct hariLibur
+{
+    char date[100];
+    char holiday[100];
+};
+
+struct hariLibur libur[100];
+int counterLibur = 0;
+
+struct Tanggal tgl[100];
+int countTanggal = 0;
+
 struct karyawan dataFiletxt[MAX_KARYAWAN];
 int incrementKaryawan = 0;
-void inputDataBaru(), login(), menuPilihanJabatan(), menuMasuk(char NIP[50], char nama[50], char anak[2], char jabatan[50]), absensi(char NIP[50], char nama[50], char anak[2], char jabatan[50]), hitungGaji(char NIP[50], char nama[50], char anak[2], char jabatan[50]);
+void inputDataBaru(), login(), menu(), menuPilihanJabatan();
+void menuMasuk(char NIP[50], char nama[50], char jabatan[50], char anak[2]), absensi(char NIP[50], char nama[50], char jabatan[50], char anak[2]), hitungGaji(char NIP[50], char nama[50], char jabatan[50], char anak[2]);
 
 int validasiMasuk()
 {
@@ -139,8 +160,21 @@ void barisBawah()
 {
     printf("\n\t\t\t\t\t\xc3\xc4\xc4\xc4\xC1\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xB4\x1b[m");
 }
-void hitungGaji(char NIP[50], char nama[50], char anak[2], char jabatan[50])
+void hitungGaji(char NIP[50], char nama[50], char jabatan[50], char anak[2])
 {
+    struct Tanggal tempTanggal;
+
+    time_t t = time(NULL);
+    struct tm *tm_info;
+    char tmpTgl[50];
+    char cekTgl[50];
+    char tmpJam[50];
+    tm_info = localtime(&t);
+    
+    strftime(tmpTgl, 50,"%A %d-%m-%Y", tm_info);
+    strftime(tmpJam, 50, "%H:%M", tm_info);
+
+    int pilihan;
     int gajiPokok, totalGaji, biayaHarian, gajiHarian;
     int biayaJabatan;
     int gajiBersihSebulan, gajiBersihSetahun;
@@ -172,16 +206,25 @@ void hitungGaji(char NIP[50], char nama[50], char anak[2], char jabatan[50])
 
     system("cls");
 
-    printf("\n\t\t\t\x1b[1m\xda\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xbf");
-    printf("\n\t\t\t \e[96mSelamat datang\e[0m \e[32m%s\e[0m", nama);
-    printf("\n\t\t\t \e[96mNip\e[0m     : \e[32m%s\e[0m", NIP);
-    printf("\n\t\t\t \e[96mJabatan\e[0m : \e[32m%s\e[0m", jabatan);
+    printf("\n\t\t\t\t\t\x1b[1m\xda\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xbf");
+    printf("\n\t\t\t\t\t\xb3                  \e[96mSelamat datang\e[0m \e[32m%-30s\e[0m  \xb3", nama);
+    printf("\n\t\t\t\t\t\xC3\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc2\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xB4");
+    printf("\n\t\t\t\t\t\xb3 \e[96mNip\e[0m     \xb3  \e[32m%-25s\e[0m                            \xb3", NIP);
+    printf("\n\t\t\t\t\t\xC3\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc5\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xB4");
+    printf("\n\t\t\t\t\t\xb3 \e[96mJabatan\e[0m \xb3  \e[32m%-25s\e[0m                            \xb3", jabatan);
+    printf("\n\t\t\t\t\t\x1b[1m\xc0\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xC1\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xd9\n\n");
 
-    printf("\n\t\t\t\t\t Masukan total jam lembur(maks : 40) : ");
+    barisAtas();
+    printf("\n\t\t\t\t\t\xb3                        \e[32mInput data karyawan\e[0m                      \xb3");
+    printf("\n\t\t\t\t\t\xC3\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xB4\x1b[m");
+
+    printf("\n\t\t\t\t\t  \e[32mMasukan total jam lembur(maks : 40) :\e[0m ");
     jamLembur = validasiJamLembur();
-
-    printf("\n\t\t\t\t Masukan banyak hari cuti : ");
+    printf("\n\t\t\t\t\t\xC3\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xc4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xB4");
+    printf("\n\t\t\t\t\t  \e[32mMasukan banyak hari cuti :\e[0m ");
     hariCuti = validasiAngka();
+
+    system("cls");
 
     if (strcmp(jabatan, "Direktur") == 0)
     {
@@ -234,9 +277,10 @@ void hitungGaji(char NIP[50], char nama[50], char anak[2], char jabatan[50])
         tunjanganAnak = TUNJANGAN_ANAK;
     }else if(tempAnak == 2){
         tunjanganAnak = 2 * TUNJANGAN_ANAK;
-    }else if(tempAnak == 3){
+    }else if(tempAnak >= 3){
         tunjanganAnak = 3 * TUNJANGAN_ANAK;
     }
+
 
     cuti = hariCuti * biayaHarian;
     lembur = jamLembur * LEMBUR;
@@ -252,61 +296,275 @@ void hitungGaji(char NIP[50], char nama[50], char anak[2], char jabatan[50])
 
     gajiHarian = hariMasuk * biayaHarian;
     totalGaji = gajiHarian + tunjanganAnak + tunjanganMakan;
+    printf("\n\t\t\t\t\t\xC9\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xBB");
+    printf("\n\t\t\t\t\t\xBA                         \e[32mRincian Gaji\e[0m                            \xBA");
+    printf("\n\t\t\t\t\t\xCC\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xB9\x1b[m");
+    printf("\n\t\t\t\t\t\xBA \e[96mNama\e[0m    : %-35s                   \xBA", nama);
+    printf("\n\t\t\t\t\t\xBA \e[96mJabatan\e[0m : %-35s                   \xBA", jabatan);
+    printf("\n\t\t\t\t\t\xBA \e[96mTanggal\e[0m : %-25s                             \xBA", tmpTgl);
+    printf("\n\t\t\t\t\t\xBA \e[96mJam\e[0m     : %-25s                             \xBA", tmpJam);
+    printf("\n\t\t\t\t\t\xCC\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xD1\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xB9\x1b[m");
+    printf("\n\t\t\t\t\t\xBA \e[96m Banyak hari masuk\e[0m     \xB3  \e[32m%-5d\e[0m Hari                            \xBA", hariMasuk);
+    printf("\n\t\t\t\t\t\xC7\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC5\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xB6");
+    printf("\n\t\t\t\t\t\xBA \e[96m Banyak hari cuti\e[0m      \xB3  \e[32m%-5d\e[0m Hari                            \xBA", hariCuti);
+    printf("\n\t\t\t\t\t\xC7\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC5\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xB6");
+    printf("\n\t\t\t\t\t\xBA \e[96m Banyak jam cuti\e[0m       \xB3  \e[32m%-5d\e[0m jam                             \xBA", jamLembur);
+    printf("\n\t\t\t\t\t\x1b[1m\xCC\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xD8\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xB9");
+    printf("\n\t\t\t\t\t\xBA \e[96m Biaya tunjangan anak\e[0m  \xB3  \e[32m%-3d\e[0m Anak \e[31mx\e[0m Rp. \e[32m%-10d\e[0m             \xBA", tempAnak, TUNJANGAN_ANAK);
+    printf("\n\t\t\t\t\t\xBA                        \xB3  = Rp. \e[32m%-10d\e[0m                      \xBA", tunjanganAnak);
+    printf("\n\t\t\t\t\t\x1b[1m\xC7\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC5\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xB6");
+    printf("\n\t\t\t\t\t\xBA \e[96m Gaji Lembur \e[0m          \xB3  \e[32m%-3d\e[0m Jam \e[31mx\e[0m Rp. \e[32m%-10d\e[0m              \xBA", jamLembur, LEMBUR);
+    printf("\n\t\t\t\t\t\xBA                        \xB3  = Rp. \e[32m%-10d\e[0m                      \xBA", lembur);
+    printf("\n\t\t\t\t\t\x1b[1m\xC7\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC5\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xB6");
+    printf("\n\t\t\t\t\t\xBA \e[96m Gaji di potong PPH\e[0m    \xB3  \e[32m%-2d\e[0m Bulan \e[31m:\e[0m Rp. \e[32m%-10d\e[0m             \xBA", 12, PPH21Terutang);
+    printf("\n\t\t\t\t\t\xBA                        \xB3  = Rp. \e[32m%-10d\e[0m                      \xBA", PPH21);
+    printf("\n\t\t\t\t\t\x1b[1m\xC7\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC5\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xB6");
+    printf("\n\t\t\t\t\t\xBA \e[96m Potongan cuti     \e[0m    \xB3  \e[32m%-3d\e[0m hari \e[31mx\e[0m Rp. \e[32m%-10d\e[0m             \xBA",hariCuti, biayaHarian);
+    printf("\n\t\t\t\t\t\xBA                        \xB3  = Rp. \e[32m%-10d\e[0m                      \xBA", cuti);    
+    printf("\n\t\t\t\t\t\x1b[1m\xCC\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xD8\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xB9");
+    printf("\n\t\t\t\t\t\xBA \e[96m Total gaji anda\e[0m       \xB3  Rp. \e[32m%-10d\e[0m                        \xBA", totalGaji);
+    printf("\n\t\t\t\t\t\xC8\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCF\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xBC");
+    printf("\n\t\t\t\t\t  \e[32mTekan enter untuk lanjut...\e[0m");
+    while(_getch() != '\r');
+    system("cls");
 
     barisAtas();
-    printf("\n\xb3\t\t      Selamat datang\t\t\t\xb3\n");
-    printf("\xb3\t         %s - %s - %-10s\t\t\xb3\n", NIP, nama, jabatan);
+    printf("\n\t\t\t\t\t\xb3                 \e[34mTerimakasih Telah Bekerja Keras\e[0m                 \xb3");
+    printf("\n\t\t\t\t\t\xb3\x1b[1m                  \e[34mSilahkan pilih menu di bawah\e[0m                   \xb3");
+    printf("\n\t\t\t\t\t\xb3                        %-10s                       \xb3",tmpTgl); 
+    printf("\n\t\t\t\t\t\xb3                               %-10s                        \xb3",tmpJam);
+    printf("\n\t\t\t\t\t\xC3\xc4\xc4\xc4\xc2\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xB4");
+    printf("\n\t\t\t\t\t\xb3\e[32mNo.\e[0m\xb3  \e[32mCetak slip gaji\e[0m                                            \xb3");
+    printf("\n\t\t\t\t\t\xC3\xc4\xc4\xc4\xC5\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xB4");
+    printf("\n\t\t\t\t\t\xb3 \e[32m1.\e[0m\xb3  \e[31mCetak\e[0m                                                      \xb3");
+    printf("\n\t\t\t\t\t\xC3\xc4\xc4\xc4\xC5\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xB4");
+    printf("\n\t\t\t\t\t\xb3 \e[32m2.\e[0m\xb3  \e[31mKembali ke menu awal\e[0m                                       \xb3");
     barisBawah();
-    printf("\nBanyak hari masuk: %d\n", hariMasuk);
-    printf("Biaya Tunjangan Makan:      Rp.%d\n", tunjanganMakan);
-    printf("Biaya Tunjangan anak:       Rp.%d\n", tunjanganAnak);
-    printf("Gaji Lembur:                Rp.%d\n", lembur);
-    printf("Gaji dipotong PPH:          Rp.%d\n", PPH21); 
-    printf("Potongan Cuti:              Rp.%d\n", cuti);
-    printf("Total Gaji anda:            Rp.%d\n\n", totalGaji);
-
-
-    // ulang();
+    printf("\n\t\t\t\t\t\xb3  \e[32m Pilihan anda (contoh : 1) \e[0m                                    \xb3");
+    printf("\n\t\t\t\t\t    \e[31m-->>\e[0m"),pilihan = validasiMasuk();
+    system("cls");
+    char nameForFile[100];
+    if(pilihan == 1){
+        FILE *print;
+        sprintf(nameForFile,"%s", nama);
+        printf("%s",nameForFile);
+        print = fopen (strcat(nameForFile,".txt"), "a+");
+        fprintf(print,"\n\t\t\t\t\t||=======================================================================");
+        fprintf(print,"\n\t\t\t\t\t||                  Rincian Gaji                                       ||");
+        fprintf(print,"\n\t\t\t\t\t||=======================================================================");
+        fprintf(print,"\n\t\t\t\t\t|| Nama    : %-35s                      ||", nama);
+        fprintf(print,"\n\t\t\t\t\t|| Jabatan : %-35s                      ||", jabatan);
+        fprintf(print,"\n\t\t\t\t\t|| Tanggal : %-25s                                ||", tmpTgl);
+        fprintf(print,"\n\t\t\t\t\t|| Jam     : %-25s                                ||", tmpJam);
+        fprintf(print,"\n\t\t\t\t\t||=====================================================================||");
+        fprintf(print,"\n\t\t\t\t\t|| Banyak hari masuk\e[0m            || %-5d Hari                     ||", hariMasuk);
+        fprintf(print,"\n\t\t\t\t\t||---------------------------------------------------------------------||");
+        fprintf(print,"\n\t\t\t\t\t|| Banyak hari cuti                  || %-5d Hari                                                            ||", hariCuti);
+        fprintf(print,"\n\t\t\t\t\t||=====================================================================||");
+        fprintf(print,"\n\t\t\t\t\t|| Biaya tunjangan anak              || %-3d Anak x Rp. %-10d                            ||", tempAnak, TUNJANGAN_ANAK);
+        fprintf(print,"\n\t\t\t\t\t||                                   ||  = Rp. %-10d                   ||", tunjanganAnak);
+        fprintf(print,"\n\t\t\t\t\t||---------------------------------------------------------------------||");
+        fprintf(print,"\n\t\t\t\t\t|| Gaji Lembur                       ||  %-3d Jam x Rp. %-10d          ||", jamLembur, LEMBUR);
+        fprintf(print,"\n\t\t\t\t\t||                                   ||  = Rp. %-10d                   ||", lembur);
+        fprintf(print,"\n\t\t\t\t\t||---------------------------------------------------------------------||");
+        fprintf(print,"\n\t\t\t\t\t|| Gaji di potong PPH                ||  Rp. %-10d : %-2d Bulan        ||", PPH21Terutang, 12);
+        fprintf(print,"\n\t\t\t\t\t||                                   ||  = Rp. %-10d                   ||", PPH21);
+        fprintf(print,"\n\t\t\t\t\t||---------------------------------------------------------------------||");
+        fprintf(print,"\n\t\t\t\t\t|| Potongan cuti                     ||  %-3d hari x Rp. %-10d         ||",hariCuti, biayaHarian);
+        fprintf(print,"\n\t\t\t\t\t||                                   ||  = Rp. %-10d                   ||", PPH21);    
+        fprintf(print,"\n\t\t\t\t\t||=====================================================================||");
+        fprintf(print,"\n\t\t\t\t\t|| Total gaji anda                   ||  Rp. %-10d                     ||", totalGaji);
+        fprintf(print,"\n\t\t\t\t\t||=====================================================================||");
+        fclose(print);
+    }else{
+        menu();
+    }
 }
-void absensi(char NIP[50], char nama[50], char anak[2], char jabatan[50])
-{
-    char absen;
-    char tempNip[50];
-    int repeat = 0;
-    strcpy(tempNip, NIP);
-    FILE *fp = fopen(strcat(tempNip, ".txt"), "a+");
-    while (repeat != 1)
-    {
-        printf("\n\t\t\t\t\t \e[31mApakah ingin absen hari ini??? (y/n)\e[0m");
-        printf("\n\t\t\t\t\t    \e[31m-->>\e[0m"), scanf("%c", &absen);
-        
+void saveAbsen(char tempNIP[50]){
+    FILE *file = fopen(tempNIP, "w");
+    for(int i = 0; i < countTanggal; ++i){
+        fprintf(file, "%s,%s,%s\n", tgl[i].hari, tgl[i].jam, tgl[i].hadir);
+    }
+    fclose(file);
+}
 
-        if (absen == 'y' || absen == 'Y')
-        {
-            fprintf(fp, "H\n");
-            printf("\n\t\t\t\t\t \e[32mAnda berhasil absen hari ini\e[0m");
-            repeat++;
-        }
-        else if (absen == 'N' || absen == 'n')
-        {
-            printf("\n\t\t\t\t\t \e[31m Anda akan dikembalikan ke menu\e[0m");
-            repeat++;
+void bacaFileAbsen(char tempNIP[50]){
+    FILE *file = fopen(tempNIP, "r");
+    countTanggal = 0;
+    while(fscanf(file, "%[^,],%[^,],%[^\n]\n", tgl[countTanggal].hari, tgl[countTanggal].jam, tgl[countTanggal].hadir) == 3){
+        countTanggal++;
+    }
+    fclose(file);
+}
+
+void createFileAbsen(char NIP[50], char nama[50], char jabatan[50], char anak[2]){
+    char tempNIP[50];
+    strcpy(tempNIP, NIP);
+    FILE *file = fopen(strcat(tempNIP, ".txt"), "a+");
+    fclose(file);
+    bacaFileAbsen(tempNIP);
+    absensi(NIP, nama, jabatan, anak);
+}
+
+int cekTanggalMerah(char tmpDate[], int kembali){
+    FILE *fLibur = fopen("daftarTglMerah2023.txt", "r");
+
+    int countHoly = 0;
+    while(fscanf(fLibur, "%[^,],%[^\n]\n", libur[counterLibur].date, libur[counterLibur].holiday)==2 ){
+        counterLibur++;
+    }
+
+    for(int i = 0; i < countHoly; ++i){
+        if(strcmp(tmpDate, libur[i].date) == 0 ){
+            printf("hari ini adalah%s\n", libur[i].holiday);
+            printf("Silahkan menikmati hari libur anda\n");
+            printf("Tekan ENTER untuk lanjut");
+            while(_getch() != '\r');
+            fclose(fLibur);
+            return kembali = 1;
         }
     }
-    fclose(fp);
-    printf("\n\t\t\t\t\t \e[32mTekan enter untuk lanjut...\e[0m");
-    while (_getch() != '\r')
-        ;
-        system("cls");
-    menuMasuk(NIP, nama, anak, jabatan);
 }
-void menuMasuk(char NIP[50], char nama[50], char anak[2], char jabatan[50])
+
+void absensi(char NIP[50], char nama[50], char jabatan[50], char anak[2])
 {
-    int pilihan;
+    system("cls");
+    struct Tanggal tempTanggal;
+    time_t t = time(NULL);
+    struct tm *tm_info;
+    char tmpHari[50];
+    char tmpTgl[50];
+    char tmpJam[50];
+    char tempNip[50];
+    int absen;
+    int kembali = 0;
+    char cekTgl[50];
+    tm_info = localtime(&t);
+    strcpy(tempNip, NIP);
+    strcpy(tmpTgl, "25-12-2023");
+
+
+
+    char tempNIP[50];
+    int repeat = 0;
+
+    strftime(tmpTgl, 50,"%A %d-%m-%Y", tm_info);
+    strftime(tmpJam, 50, "%H:%M", tm_info);
+
+    kembali = cekTanggalMerah(tmpTgl, kembali);
+    if(kembali==1){
+        return menuMasuk(NIP, nama, anak, jabatan);
+    }
+
+    if(strcmp(tmpHari, "Sunday")==0){
+        printf("Hari ini adalah hari minggu, apakah anda ingin lembur?\n");
+        printf("1. Ya\n");
+        printf("2. Tidak\n");
+        printf("Pilihan anda: \n");
+        printf("> ");
+        absen = validasiMasuk();
+        switch(absen){
+            case 1 :
+                printf("tst");
+                return;
+            break;
+
+            case 2 :
+                printf("Anda akan dikembalikan ke menu.\n");
+                printf("Tekan ENTER untuk lanjut");
+                while(_getch() != '\r');
+                return menuMasuk(NIP, nama, anak, jabatan);
+            break;
+        }
+    }
+
+
+    strcpy(tempNIP, NIP);
+    FILE *file = fopen(strcat(tempNIP,".txt"), "a+");
+
+
     barisAtas();
     printf("\n\t\t\t\t\t\xb3                 \e[34mSelamat Datang Karyawan Perusahaan\e[0m              \xb3");
+    printf("\n\t\t\t\t\t\xb3\x1b[1m                  \e[34mSilahkan Absensi terlebih dahulu\e[0m               \xb3");
+    printf("\n\t\t\t\t\t\xb3                        %-10s                       \xb3",tmpTgl);
+    printf("\n\t\t\t\t\t\xb3                               %-10s                        \xb3",tmpJam);
+    printf("\n\t\t\t\t\t\xC3\xc4\xc4\xc4\xc2\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xB4");
+    printf("\n\t\t\t\t\t\xb3\e[96mNo.\e[0m\xb3  \e[32mApakah anda Ingin Absen Hari ini\e[0m                           \xb3");
+    printf("\n\t\t\t\t\t\xC3\xc4\xc4\xc4\xC5\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xB4");
+    printf("\n\t\t\t\t\t\xb3 \e[32m1.\e[0m\xb3  \e[31mSaya ingin absen\e[0m                                           \xb3");
+    printf("\n\t\t\t\t\t\xC3\xc4\xc4\xc4\xC5\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xB4");
+    printf("\n\t\t\t\t\t\xb3 \e[32m2.\e[0m\xb3  \e[31mSaya tidak ingin absen\e[0m                                     \xb3");
+    barisBawah();
+    printf("\n\t\t\t\t\t\xb3  \e[32m Pilihan anda (contoh : 1) \e[0m                                    \xb3");
+    printf("\n\t\t\t\t\t    \e[31m-->>\e[0m"),absen = validasiMasuk();
+    system("cls");
+        if(absen==1){
+
+            int sudahAbsen = 0;
+            for(int i = 0; i < countTanggal; ++i){
+                if(strcmp(tmpTgl, tgl[i].hari) == 0 ){
+                    sudahAbsen = 1;
+                    barisAtas();
+                    printf("\n\t\t\t\t\t\xb3                \e[32mAnda telah berhasil melakukan absen\e[0m              \xb3");
+                    printf("\n\t\t\t\t\t\xc0\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xd9\x1b[m");
+
+                    printf("\n\t\t\t\t\t  \e[34mSilahkan absen besok.\e[0m");
+                    printf("\n\t\t\t\t\t  \e[34mTekan ENTER untuk lanjut...\e[0m");
+                    while(_getch() != '\r');
+                    menuMasuk(NIP, nama, jabatan, anak);
+                    break;
+                }
+            }
+
+            if(!sudahAbsen && absen == 1){
+            strcpy(tgl[countTanggal].hari, tmpTgl);
+            strcpy(tgl[countTanggal].jam, tmpJam);
+            strcpy(tgl[countTanggal].hadir, "H");
+            countTanggal++;
+
+            printf("%s", tgl[countTanggal].hari);
+            printf("\n\t\t\t\t\t");
+            barisAtas();
+            printf("\n\t\t\t\t\t\xb3                    \e[32mAnda berhasil absen hari ini\e[0m                \xb3");
+            printf("\n\t\t\t\t\t\xc0\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xd9\x1b[m");
+
+            
+
+            saveAbsen(tempNIP);
+            fclose(file);
+            printf("\n\t\t\t\t\t \e[31mTekan ENTER untuk lanjut...\e[0m");
+            while(_getch() != '\r');
+            return menuMasuk(NIP, nama, jabatan, anak);
+            }
+        }
+        else if(absen==2){
+            barisAtas();
+            printf("\n\t\t\t\t\t\xb3                   \e[32mAnda akan dikembalikan ke menu\e[0m                \xb3");
+            printf("\n\t\t\t\t\t\xc0\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xd9\x1b[m");
+
+            printf("\n\t\t\t\t\t  \e[32mTekan ENTER untuk lanjut...\e[0m");
+            while(_getch() != '\r');
+            return menuMasuk(NIP, nama, jabatan, anak);
+        }else{
+            system("cls");
+            printf("\n\t\t\t\t\t \e[31mPilihan anda salah.\e[0m");
+        }
+
+    fclose(file);
+    printf("\n\t\t\t\t\t %s", absen);
+    printf("\n\t\t\t\t\t %d", repeat);
+    printf("\n\t\t\t\t\t \e[32mTekan ENTER untuk lanjut...\e[0m");
+    while(_getch() != '\r');
+    menuMasuk(NIP, nama, anak, jabatan);
+}
+void menuMasuk(char NIP[50], char nama[50], char jabatan[50], char anak[2])
+{
+    system("cls");
+    int pilihan;
+    barisAtas();
+    printf("\n\t\t\t\t\t\xb3                 \e[96mSelamat Datang Karyawan Perusahaan\e[0m              \xb3");
     printf("\n\t\t\t\t\t\xb3\x1b[1m                           \e[34mPT. Toko Kita\e[0m                         \xb3\e[0m");
-    printf("\n\t\t\t\t\t\xb3               \e[34mWelcome : %-2s - %-2s - %-25s\e[0m\xb3", NIP, nama, jabatan);
+    printf("\n\t\t\t\t\t\xb3                                                                 \xb3");
     printf("\n\t\t\t\t\t\xC3\xc4\xc4\xc4\xc2\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xB4");
     printf("\n\t\t\t\t\t\xb3\e[32mNo.\e[0m\xb3  \e[31mSilahkan pilih menu di bawah ini\e[0m                           \xb3");
     printf("\n\t\t\t\t\t\xC3\xc4\xc4\xc4\xC5\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xB4");
@@ -319,10 +577,10 @@ void menuMasuk(char NIP[50], char nama[50], char anak[2], char jabatan[50])
     switch (pilihan)
     {
     case 1:
-        absensi(NIP, nama, anak, jabatan);
+        createFileAbsen(NIP, nama, jabatan, anak);
         break;
     case 2:
-        hitungGaji(NIP, nama, anak, jabatan);
+        hitungGaji(NIP, nama, jabatan, anak);
         break;
     }
 }
@@ -335,11 +593,11 @@ void menu()
     int pilihan;
     system("cls");
     barisAtas();
-    printf("\n\t\t\t\t\t\xb3                 \e[34mSelamat Datang Karyawan Perusahaan\e[0m              \xb3");
+    printf("\n\t\t\t\t\t\xb3                 \e[96mSelamat Datang Karyawan Perusahaan\e[0m              \xb3");
     printf("\n\t\t\t\t\t\xb3\x1b[1m                           \e[34mPT. Toko Kita\e[0m                         \xb3\e[0m");
     printf("\n\t\t\t\t\t\xb3                      \e[34mDated : %-2d - %-2d - %-5d\e[0m                    \xb3", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900);
     printf("\n\t\t\t\t\t\xC3\xc4\xc4\xc4\xc2\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xB4");
-    printf("\n\t\t\t\t\t\xb3\e[32mNo.\e[0m\xb3  \e[31mSilahkan pilih menu di bawah ini\e[0m                           \xb3");
+    printf("\n\t\t\t\t\t\xb3\e[96mNo.\e[0m\xb3  \e[34mSilahkan pilih menu di bawah ini\e[0m                           \xb3");
     printf("\n\t\t\t\t\t\xC3\xc4\xc4\xc4\xC5\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xB4");
     printf("\n\t\t\t\t\t\xb3 \e[32m1.\e[0m\xb3  \e[31mLogin\e[0m                                                      \xb3");
     printf("\n\t\t\t\t\t\xC3\xc4\xc4\xc4\xC5\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xB4");
@@ -348,7 +606,7 @@ void menu()
     printf("\n\t\t\t\t\t\xb3 \e[32m0.\e[0m\xb3  \e[31mKeluar          \e[0m                                           \xb3");
     barisBawah();
     printf("\n\t\t\t\t\t\xb3  \e[32m Pilihan anda (contoh : 1) \e[0m                                    \xb3");
-    printf("\n\t\t\t\t\t    \e[31m-->>\e[0m"), pilihan = validasiMasuk();
+    printf("\n\t\t\t\t\t    \e[96m-->>\e[0m"), pilihan = validasiMasuk();
     if (pilihan == 1)
     {
         system("cls");
@@ -380,10 +638,11 @@ void inputDataBaru()
         return;
     }
     barisAtas();
-    printf("\n\t\t\t\t\t\xb3                       \e[32m Input Data Karyawan\e[0m                      \xb3");
-    printf("\n\t\t\t\t\t\xc0\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xd9\x1b[m");
-    printf("\n\t\t\t\t\tMasukan NIP anda :");
+    printf("\n\t\t\t\t\t\xb3                        \e[32mInput data Karyawan baru\e[0m                 \xb3");
+    printf("\n\t\t\t\t\t\xC3\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xB4\x1b[m");
+    printf("\n\t\t\t\t\t\xb3 \e[32m Masukan NIP anda : \e[0m");
     scanf("%s", new.nip);
+    getchar();
 
     if (!validasiNip(new.nip))
     {
@@ -391,7 +650,7 @@ void inputDataBaru()
         barisAtas();
         printf("\n\t\t\t\t\t\xb3        \e[32mInput tidak Valid! Tolong Masukan NIP yang valid\e[0m      \xb3");
         printf("\n\t\t\t\t\t\xc0\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xd9\x1b[m");
-        inputDataBaru();
+        return inputDataBaru();
     }
 
     for (int i = 0; i < incrementKaryawan; ++i)
@@ -399,16 +658,23 @@ void inputDataBaru()
         if (strcmp(new.nip, dataFiletxt[i].nip) == 0)
         {
             barisAtas();
-            printf("\n\t\t\t\t\t\xb3           \e[32mNIP sudah ada! Tolong Masukan NIP kembali!!!\e[0m            \xb3");
+            printf("\n\t\t\t\t\t\xb3          \e[32mNIP sudah ada! Tolong Masukan NIP kembali!!!\e[0m           \xb3");
             printf("\n\t\t\t\t\t\xc0\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xd9\x1b[m");
             inputDataBaru();
+            fflush(stdin);
+            return inputDataBaru();
+            break;
         }
     }
-    printf("\n\t\t\t\t\tMasukan nama anda :");
-    scanf("%s", new.nama);
+    printf("\n\t\t\t\t\t\xC3\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xc4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xB4");
+    printf("\n\t\t\t\t\t\xb3  \e[32mMasukan nama anda :\e[0m");
+    fgets(new.nama, sizeof(new.nama), stdin);
+    new.nama[strcspn(new.nama, "\n")] = '\0';
 
     menuPilihanJabatan();
-    printf("\n\t\t\t\t\t    \e[31m-->>\e[0m"), pilihan = validasiJabatan();
+    printf("\n\t\t\t\t\t    \e[31m-->>\e[0m");
+    pilihan = validasiJabatan();
+    system("cls");
     switch (pilihan)
     {
     case 1:
@@ -439,11 +705,16 @@ void inputDataBaru()
         strcpy(new.jabatan, "Cleaning Service");
         break;
     }
-
-    printf("\n\t\t\t\t\tMasukan jumlah anak anda: ");
+    barisAtas();
+    printf("\n\t\t\t\t\t\xb3                    \e[96mInput data karyawan\e[0m                          \xb3");
+    printf("\n\t\t\t\t\t\xC3\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xB4\x1b[m");
+    printf("\n\t\t\t\t\t\xb3    \e[32mMasukan jumlah anak anda:\e[0m ");
     scanf("%s", new.anak);
-    printf("\n\t\t\t\t\tSilahkan buat password anda: ");
+    getchar();
+    printf("\n\t\t\t\t\t\xC3\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xc4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xB4");
+    printf("\n\t\t\t\t\t\xb3    \e[32mSilahkan buat password anda:\e[0m ");
     scanf("%s", new.password);
+    getchar();
 
     strcpy(dataFiletxt[incrementKaryawan].nip, new.nip);
     strcpy(dataFiletxt[incrementKaryawan].nama, new.nama);
@@ -456,13 +727,11 @@ void inputDataBaru()
     {
         fprintf(fp, "%s,%s,%s,%s,%s\n", dataFiletxt[i].nip, dataFiletxt[i].nama, dataFiletxt[i].jabatan, dataFiletxt[i].anak, dataFiletxt[i].password);
     }
-
     fclose(fp);
 
-    
-    printf("\n\t\t\t\t\t\e[32mData ==>> %s - %s - %s\e[0m              ", new.nip, new.nama, new.jabatan);
-    printf("\n\t\t\t\t\t\e[31mData berhasil dimasukan, silahkan login kembali\e[0m");
-    printf("\n\t\t\t\t\tTekan enter untuk lanjut.....");
+    printf("\n\t\t\t\t\t   \e[31mData ==>> %s - %s - %s\e[0m              ", new.nip, new.nama, new.jabatan);
+    printf("\n\t\t\t\t\t   \e[32mberhasil dimasukan, silahkan login kembali\e[0m");
+    printf("\n\t\t\t\t\t   \e[32mTekan enter untuk lanjut...\e[0m");
     while(_getch() != '\r');
     system("cls");
     menu();
@@ -516,8 +785,9 @@ void login()
 
     barisAtas();
     printf("\n\t\t\t\t\t\xb3                        \e[32mSilahkan Login\e[0m                           \xb3");
-    printf("\n\t\t\t\t\t\xc3\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xd9\x1b[m");
-    printf("\n\t\t\t\t\t\xc3 \e[32m Masukan NIP anda : \e[0m"), scanf("%s", cariNip);
+    printf("\n\t\t\t\t\t\xC3\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xB4\x1b[m");
+    printf("\n\t\t\t\t\t\xb3 \e[32m Masukan NIP anda : \e[0m"),scanf("%s", cariNip);
+    
     for (int i = 0; i < incrementKaryawan; ++i)
     {
         if (strcmp(cariNip, dataFiletxt[i].nip) == 0)
@@ -525,10 +795,12 @@ void login()
             while (!match)
             {
                 int j = 0;
-                printf("\n\t\t\t\t\t\t \e[32mPassword :\e[0m ");
+                printf("\n\t\t\t\t\t\xC3\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xc4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xC4\xB4");
+                printf("\n\t\t\t\t\t\xb3   \e[32mPassword :\e[0m");
                 while ((ch = _getch()) != '\r' && j < 49)
                 {
                     if (ch == '\b' && j > 0)
+
                     {
                         printf("\b \b");
                         j--;
@@ -545,23 +817,21 @@ void login()
                     match++;
                     strcpy(NIP, dataFiletxt[i].nip);
                     strcpy(nama, dataFiletxt[i].nama);
-                    strcpy(anak, dataFiletxt[i].anak);
                     strcpy(jabatan, dataFiletxt[i].jabatan);
+                    strcpy(anak, dataFiletxt[i].anak);
                     system("cls");
-                    menuMasuk(NIP, nama, anak, jabatan);
+                    menuMasuk(NIP, nama, jabatan, anak);
                     return;
                 }
                 else
                 {
-                    system("cls");
-                    printf("\n\t\t\t\t\t \e[31mPassword salah\e[0m");
-                    printf("\n\t\t\t\t\t\e[32mSilahkan masukan password kembali\e[0m");
+                    printf("\n\t\t\t\t\t   \e[31mPassword tidak valid!!!, masukan kembali password\e[0m");
                 }
             }
         }
     }
-    printf("\n\t\t\t\t\t\e[31mNIP anda salah, mohon log in ulang\e[0m");
-    printf("\n\t\t\t\t\t\e[32mTekan ENTER untuk lanjut...\e[0m");
+    printf("\n\t\t\t\t\t   \e[31mNIP anda salah, Anda akan \e[0m");
+    printf("\n\t\t\t\t\t   \e[32mTekan ENTER untuk lanjut...\e[0m");
     while (_getch() != '\r')
         ;
     login();
@@ -574,8 +844,8 @@ int main()
         while (fscanf(fp, "%[^,],%[^,],%[^,],%[^,],%[^\n]\n",
                       dataFiletxt[incrementKaryawan].nip,
                       dataFiletxt[incrementKaryawan].nama,
-                      dataFiletxt[incrementKaryawan].anak,
                       dataFiletxt[incrementKaryawan].jabatan,
+                      dataFiletxt[incrementKaryawan].anak,
                       dataFiletxt[incrementKaryawan].password) == 5)
         {
             incrementKaryawan++;
